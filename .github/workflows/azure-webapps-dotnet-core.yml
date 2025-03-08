@@ -25,5 +25,12 @@ jobs:
   
     - name: Publish
       run: dotnet publish ./GithubActionTest.sln --configuration Release --no build
+
+    -name: Deployment
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: mygithubactiontest1
+        publish-profile: ''
+        package : './publish
     
       
