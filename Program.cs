@@ -10,17 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    var connectionString = Environment.GetEnvironmentVariable("Postgress");
-
-    if (string.IsNullOrEmpty(connectionString))
-    {
-        Console.WriteLine("Error: Postgress connection string is missing or empty.");
-        throw new InvalidOperationException("Database connection string is missing!");
-    }
-    else
-    {
-        Console.WriteLine("Using Postgress connection string: " + connectionString);
-    }
+    var connectionString = builder.Configuration.GetConnectionString("Postgress");
 
     options.UseNpgsql(connectionString)
             .EnableDetailedErrors() // Detaylý hata mesajlarýný etkinleþtir
