@@ -26,10 +26,7 @@ jobs:
  
     - name: Publish
       run: dotnet publish ./GithubActionTest.csproj --configuration Release --no-build --output ./publish
-
-    - name: Set DB Connection String
-      run: echo "Postgress=${{ secrets.Postgress }}" >> $GITHUB_ENV
-
+      
     - name: Deployment
       uses: azure/webapps-deploy@v2
       with:
