@@ -12,23 +12,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-  
+ 
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '9.0.x'
-  
+ 
     - name: Restore
       run: dotnet restore ./GithubActionTest.sln
 
     - name: Build
       run: dotnet build ./GithubActionTest.sln --configuration Release
-  
+ 
     - name: Publish
       run: dotnet publish ./GithubActionTest.csproj --configuration Release --no-build --output ./publish
 
     - name: Set DB Connection String
-      run: echo "Postgress=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
+      run: echo "Postgress=${{ secrets.Postgress }}" >> $GITHUB_ENV
 
     - name: Deployment
       uses: azure/webapps-deploy@v2
