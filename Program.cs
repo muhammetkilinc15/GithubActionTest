@@ -11,7 +11,20 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = Environment.GetEnvironmentVariable("Postgress");
-    options.UseNpgsql(connectionString);
+
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        Console.WriteLine("Error: Postgress connection string is missing or empty.");
+        throw new InvalidOperationException("Database connection string is missing!");
+    }
+    else
+    {
+        Console.WriteLine("Using Postgress connection string: " + connectionString);
+    }
+
+    options.UseNpgsql(connectionString)
+            .EnableDetailedErrors() // Detaylý hata mesajlarýný etkinleþtir
+           .EnableSensitiveDataLogging(); // Veritabaný sorgularý ile ilgili hassas verileri logla
 });
 
 
@@ -24,11 +37,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(opt =>
     {
-        opt.DocumentTitle = "Github Action API";  
+        opt.DocumentTitle = "Github Action API";
     });
 }
 
-using(var scope = app.Services.CreateScope())
+using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
