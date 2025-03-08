@@ -1,5 +1,8 @@
 ﻿using Carter;
+using GithubActionTest.Context;
 using GithubActionTest.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GithubActionTest.Modules.CategoryModule
 {
@@ -9,16 +12,18 @@ namespace GithubActionTest.Modules.CategoryModule
         {
             IEndpointRouteBuilder group = app.MapGroup("/api/categories");
 
-            group.MapGet("", () =>
+            group.MapGet("", async ([FromServices] ApplicationDbContext context,CancellationToken cancellationToken) =>
             {
-                List<Category> categories =
-                [
-                    new() { Id = 1, Name = "Category 1" },
-                    new() { Id = 2, Name = "Category 2" },
-                    new() { Id = 3, Name = "Category 3" }
-                ];
+               var categories = await context.Categories.ToListAsync(cancellationToken);
                 return Results.Ok(categories);
             }).Produces<List<Category>>();
+
+            group.MapPost("", async ([FromBody] Category category, [FromServices] ApplicationDbContext context, CancellationToken cancellationToken) =>
+            {
+                await context.Categories.AddAsync(category, cancellationToken);
+                await context.SaveChangesAsync(cancellationToken);
+                return Results.Created($"/api/categories/{category.Id}", category);
+            }).Produces<Category>();
         }
     }
 }

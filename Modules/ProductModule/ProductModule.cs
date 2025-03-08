@@ -1,5 +1,8 @@
 ﻿using Carter;
+using GithubActionTest.Context;
 using GithubActionTest.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 namespace GithubActionTest.Modules.ProductModule
 {
     public class ProductModule : ICarterModule
@@ -8,19 +11,17 @@ namespace GithubActionTest.Modules.ProductModule
         {
             IEndpointRouteBuilder group = app.MapGroup("/api/products");
 
-            group.MapGet("", () =>
+            group.MapGet("", async ([FromServices]ApplicationDbContext context) =>
             {
-                List<Product> products =
-                [
-                    new() { Id = 1, Name = "Product 1", Price = 100 },
-                    new() { Id = 2, Name = "Product 2", Price = 200 },
-                    new() { Id = 3, Name = "Product 3", Price = 300 }
-                ];
+                var products = await context.Products.ToListAsync();
                 return Results.Ok(products);
             }).Produces<List<Product>>();
 
-            group.MapPost("", (Product product) =>
+            group.MapPost("", async ([FromServices]ApplicationDbContext context,[FromBody]Product product) =>
             {
+                await context.Products.AddAsync(product);
+
+                await context.SaveChangesAsync();
                 return Results.Created($"/api/products/{product.Id}", product);
             }).Produces<Product>();
         }
