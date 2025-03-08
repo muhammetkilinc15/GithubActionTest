@@ -1,10 +1,10 @@
-name : Publish
+name: Publish
 
 on:
   workflow_dispatch:
   push: 
     branches:
-    - master
+      - master
 
 jobs:
   publish:
@@ -15,22 +15,21 @@ jobs:
   
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
-      with :
+      with:
         dotnet-version: '9.0.x'
   
     - name: Restore
       run: dotnet restore ./GithubActionTest.sln
+
     - name: Build
       run: dotnet build ./GithubActionTest.sln --configuration Release
   
     - name: Publish
-      run: dotnet publish ./GithubActionTest.sln --configuration Release --no build
+      run: dotnet publish ./GithubActionTest.sln --configuration Release --no-build
 
-    -name: Deployment
+    - name: Deployment
       uses: azure/webapps-deploy@v2
       with:
         app-name: mygithubactiontest1
-        publish-profile: ''
-        package : './publish
-    
-      
+        publish-profile: ${{ secrets.Azure_publish_profile }}
+        package: './publish'
