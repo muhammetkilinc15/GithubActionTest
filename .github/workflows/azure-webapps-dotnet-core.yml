@@ -25,7 +25,7 @@ jobs:
       run: dotnet build ./GithubActionTest.sln --configuration Release
   
     - name: Publish
-      run: dotnet publish ./GithubActionTest.sln --configuration Release --no-build --output '${{ secrets.Azure_publish_profile }}'
+      run: dotnet publish ./GithubActionTest.csproj --configuration Release --no-build --output '${{ secrets.Azure_publish_profile }}'
       
     - name: Deployment
       uses: azure/webapps-deploy@v2
