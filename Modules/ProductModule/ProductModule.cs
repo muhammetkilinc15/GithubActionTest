@@ -19,6 +19,10 @@ namespace GithubActionTest.Modules.ProductModule
                 return Results.Ok(products);
             }).Produces<List<Product>>();
 
+            group.MapPost("", (Product product) =>
+            {
+                return Results.Created($"/api/products/{product.Id}", product);
+            }).Produces<Product>();
         }
     }
 }
